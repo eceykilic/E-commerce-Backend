@@ -7,11 +7,9 @@ import com.workintech.ecommerce.dto.response.UserResponse;
 import com.workintech.ecommerce.entity.User;
 import com.workintech.ecommerce.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("http://localhost:5173")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -23,7 +21,7 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/signup/")
+    @PostMapping("/signup")
     public UserResponse register(@RequestBody UserRequest userRequest){
         User user=authenticationService
                 .signup(userRequest.name(), userRequest.email(),

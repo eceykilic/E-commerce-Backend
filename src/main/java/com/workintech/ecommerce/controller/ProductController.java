@@ -14,12 +14,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@CrossOrigin("http://localhost:5173")
 @RestController
 @RequestMapping("/v1/products")
 public class ProductController {
-    private ProductService productService;
-    private RestTemplateBuilder restTemplateBuilder;
+    private final ProductService productService;
+    private final RestTemplateBuilder restTemplateBuilder;
     private CategoryService categoryService;
     private static final String GET_PRODUCTS = "https://workintech-fe-ecommerce.onrender.com/products";
 
