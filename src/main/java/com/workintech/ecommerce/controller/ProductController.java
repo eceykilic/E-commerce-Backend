@@ -1,120 +1,58 @@
 package com.workintech.ecommerce.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.workintech.ecommerce.converter.Converter;
 import com.workintech.ecommerce.dto.response.ProductResponse;
 import com.workintech.ecommerce.entity.Products;
-import com.workintech.ecommerce.service.CategoryService;
+import com.workintech.ecommerce.exception.EcommerceException;
 import com.workintech.ecommerce.service.ProductService;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-@CrossOrigin("http://localhost:5173")
 @RestController
-@RequestMapping("/v1/products")
+@RequestMapping("/products")
 public class ProductController {
-    private final ProductService productService;
-    private final RestTemplateBuilder restTemplateBuilder;
-    private CategoryService categoryService;
-    private static final String GET_PRODUCTS = "https://workintech-fe-ecommerce.onrender.com/products";
+
+    private static final String EXTERNAL_API_URL = "https://workintech-fe-ecommerce.onrender.com/products?limit=587";
+    private static final String EXTERNAL_API_BASE_URL = "https://workintech-fe-ecommerce.onrender.com/products/";
+
+    private final RestTemplate restTemplate;
+    private ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService, RestTemplateBuilder restTemplateBuilder) {
-        this.productService = productService;
-        this.restTemplateBuilder = restTemplateBuilder;
-    }
-
-    @PostMapping("/all")
-    public List<ProductResponse> saveAll() {
-        List<String> imagesList = new ArrayList<>();
-        List<Products> productList = new ArrayList<>();
-
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        ResponseEntity<JsonNode> responses = restTemplate.getForEntity(GET_PRODUCTS, JsonNode.class);
-
-        for (JsonNode node : responses.getBody().get("products")) {
-            Products product = new Products();
-            product.setName(node.get("name").asText());
-            product.setDescription(node.get("description").asText());
-            product.setPrice(node.get("price").asText());
-            product.setStock(node.get("stock").asText());
-            product.setCategoryId(node.get("category_id").asLong());
-            product.setRating(node.get("rating").asText());
-            product.setImage(node.get("images").get(0).get("url").asText());
-            productList.add(product);
-        }
-        return productService.saveAll(productList);
-    }
-
-    @GetMapping("/{id}")
-    public ProductResponse getProductsByCategoryId(@PathVariable Long id) {
-        return Converter.findProduct(productService.getProductById(id));
+    public ProductController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping("/")
-    @ResponseBody
-    public List<ProductResponse> findByParams(@RequestParam(name = "filter", required = false) String filter,
-                                              @RequestParam(name = "sort", required = false, defaultValue = "default") String sort,
-                                              @RequestParam(name = "category", required = false) Long id) {
-
-        List<ProductResponse> responseList=Converter.findProducts(productService.getAllProducts());
-        //SORT
-        if (filter == null && id == null&& sort!=null) {
-            switch (sort) {
-                case "rating:desc":
-                    responseList= productService.bestToWorstSorting();
-                case "rating:asc":
-                    responseList= productService.worstToBestSorting();
-                case "price:desc":
-                    responseList= productService.highestToLowestSorting();
-                case "price:asc":
-                    responseList= productService.lowestToHighestSorting();
-            }
+    public ResponseEntity<?> getAllProducts() {
+        try {
+            // Harici API'den verileri çek
+            ResponseEntity<String> response = restTemplate.getForEntity(EXTERNAL_API_URL, String.class);
+            // Harici API'den alınan veriyi doğrudan döndür
+            return ResponseEntity.ok(response.getBody());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Harici API'den veri çekilirken bir hata oluştu.");
         }
-
-        //SORT AND FİLTER
-        else if (filter != null && id == null && sort!=null) {
-            return switch (sort) {
-                case "rating:desc" -> responseList=productService.searchAndBestSorting(filter);
-                case "rating:asc" -> responseList=productService.searchAndWorstSorting(filter);
-                case "price:desc" -> responseList=productService.searchAndHighestSorting(filter);
-                case "price:asc" -> responseList=productService.searchAndLowestSorting(filter);
-                default -> responseList=productService.searchByName(filter);
-            };
-        }
-
-        //SORT AND CATEGORY
-        else if (filter == null && id != null && sort!=null) {
-            return switch (sort) {
-                case "rating:desc" -> responseList=Converter.findProducts(productService.bestToWorstSortingAndCategory(id));
-                case "rating:asc" -> responseList=Converter.findProducts(productService.worstToBestSortingAndCategory(id));
-                case "price:desc" -> responseList= Converter.findProducts(productService.highestToLowestSortingAndCategory(id));
-                case "price:asc" ->  responseList=Converter.findProducts(productService.lowestToHighestSortingAndCategory(id));
-                default -> responseList=Converter.findProducts(productService.getProductsByCategoryId(id));
-            };
-        }
-
-        //FILTER AND CATEGORY
-        else if (filter != null && String.valueOf(id) != null && sort==null) {
-            responseList=Converter.findProducts(productService.searchByNameAndCategory(filter, id));
-        }
-
-        //FILTER SORT CATEGORY
-        else if(filter !=null && id != null && sort !=null){
-            return switch (sort) {
-                case "rating:desc" ->responseList=  Converter.findProducts(productService.searchAndBestSortAndCategory(id,filter));
-                case "rating:asc" -> responseList= Converter.findProducts(productService.searchAndWorstSortAndCategory(id,filter));
-                case "price:desc" -> responseList=  Converter.findProducts(productService.searchAndAscSortAndCategory(id,filter));
-                case "price:asc" ->  responseList= Converter.findProducts(productService.searchAndDescSortAndCategory(id,filter));
-                default -> responseList=Converter.findProducts(productService.getProductsByCategoryId(id));
-            };
-        }
-        return responseList;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@Positive @PathVariable Long id) {
+        try {
+            ResponseEntity<Products> response = restTemplate.getForEntity(EXTERNAL_API_BASE_URL + id, Products.class);
+            Products product = response.getBody();
+            if (product != null) {
+                return ResponseEntity.ok(product);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ürün bulunamadı.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ürün getirilirken bir hata oluştu.");
+        }
+    }
 }

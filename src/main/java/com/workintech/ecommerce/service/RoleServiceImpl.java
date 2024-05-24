@@ -20,14 +20,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> getRoles() {
-        // Get roles from the repository
-        List<Role> roles = roleRepository.findAll();
-
-        // Check if roles are present
-        if (roles.isEmpty()) {
-            throw new RuntimeException("No roles found in the database.");
-        }
-
-        return roles;
+        return roleRepository.findAll();
     }
 }

@@ -32,4 +32,5 @@ public interface ProductService {
     List<Products> lowestToHighestSortingAndCategory(Long categoryId);
     List<Products> worstToBestSortingAndCategory(Long categoryId);
     List<Products> bestToWorstSortingAndCategory(Long categoryId);
+    List<ProductResponse> fetchAndSaveAllFromExternalService();
 }

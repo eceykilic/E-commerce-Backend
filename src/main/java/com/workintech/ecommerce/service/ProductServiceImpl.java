@@ -8,14 +8,11 @@ import com.workintech.ecommerce.repository.ProductRepository;
 import com.workintech.ecommerce.service.ProductService;
 import com.workintech.ecommerce.util.EcommerceValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -42,8 +39,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> saveAll(List<Products> productsList) {
-        return Converter.findProducts(productRepository.saveAll(productsList));
+        List<Products> savedProducts = productRepository.saveAll(productsList);
+        return Converter.findProducts(savedProducts);
     }
+
 
     @Override
     public ProductResponse findByProductName(String filter) {
@@ -95,7 +94,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> searchAndHighestSorting(String filter) {
-       EcommerceValidation.checkEmptyOrNull(filter,"filter");
+        EcommerceValidation.checkEmptyOrNull(filter,"filter");
         return Converter.findProducts(productRepository.searchAndHighestSorting(filter));
     }
 
@@ -200,6 +199,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.bestToWorstSortingAndCategory(categoryId);
     }
 
+    @Override
+    public List<ProductResponse> fetchAndSaveAllFromExternalService() {
+        return null;
+    }
 
 
 }

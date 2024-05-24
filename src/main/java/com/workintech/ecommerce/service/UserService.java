@@ -12,4 +12,5 @@ public interface UserService {
 
     UserResponse save(User user);
     User delete(Long id);
+    User signUp(User user);
 }

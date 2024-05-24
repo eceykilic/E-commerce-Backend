@@ -1,9 +1,8 @@
-
+package com.workintech.ecommerce.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,67 +16,56 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
-    public AuthenticationManager authManager(UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService){
+        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(provider);
     }
 
-
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:9000/**",
-                "http://localhost:5173/"));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration corsConfiguration=new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/"));
+        corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
+        corsConfiguration.setAllowedHeaders(List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE));
+
+        UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",corsConfiguration);
+
         return source;
     }
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
-        security.cors().configurationSource(corsConfigurationSource());
-        return security.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
+        httpSecurity.cors().configurationSource(corsConfigurationSource());
+        return httpSecurity.csrf(csrf->csrf.disable())
+                .authorizeHttpRequests(auth->{
+                    auth.requestMatchers("/products/**").permitAll();
+                    auth.requestMatchers("/admin/**").hasAuthority("ADMIN");
                     auth.requestMatchers("/auth/**").permitAll();
-
-                    auth.requestMatchers("/user/**").permitAll();
-
-                    auth.requestMatchers("/roles**").permitAll();
-
+                    auth.requestMatchers("/category/**").permitAll();
+                    auth.requestMatchers("/order/**").hasAnyAuthority("USER","ADMIN");
                     auth.requestMatchers("/card/**").permitAll();
-
-                    auth.requestMatchers("/order/**").permitAll();
-
                     auth.requestMatchers("/address/**").permitAll();
-
-                    auth.requestMatchers("/categories/**").permitAll();
-
-                    auth.requestMatchers("/v1/products/**").permitAll();
-
-                    auth.requestMatchers("/swagger-ui/**").permitAll();
-
                     auth.anyRequest().authenticated();
-                })
-
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
+                }).httpBasic(Customizer.withDefaults())
                 .build();
     }
+
 
 
 }

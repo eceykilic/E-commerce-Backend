@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-@CrossOrigin("http://localhost:5173")
+
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
-    private RoleService roleService;
+    private final RoleService roleService;
 
     @Autowired
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
 
+    @CrossOrigin("https://workintech-fe-ecommerce.onrender.com")
     @GetMapping
     public List<RoleResponse> findAll() {
         return Converter.findRoles(roleService.getRoles());
     }
-
 }
