@@ -5,6 +5,7 @@ import com.workintech.ecommerce.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Converter {
 
@@ -77,24 +78,13 @@ public class Converter {
 
     // Product Conversion Methods
     public static List<ProductResponse> findProducts(List<Products> products) {
-        List<ProductResponse> productResponses = new ArrayList<>();
-        for (Products product : products) {
-            productResponses.add(new ProductResponse(
-                    product.getId(),
-                    product.getName(),
-                    product.getDescription(),
-                    product.getPrice(),
-                    product.getStock(),
-                    product.getCategoryId(),
-                    product.getRating(),
-                    product.getSellCount(),
-                    product.getImage()
-            ));
-        }
-        return productResponses;
+        return products.stream().map(Converter::findProduct).collect(Collectors.toList());
     }
 
     public static ProductResponse findProduct(Products product) {
+        List<String> imageUrls = product.getImages() != null ?
+                product.getImages().stream().map(image -> image.getUrl()).collect(Collectors.toList())
+                : new ArrayList<>();
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
@@ -104,7 +94,7 @@ public class Converter {
                 product.getCategoryId(),
                 product.getRating(),
                 product.getSellCount(),
-                product.getImage()
+                imageUrls
         );
     }
 

@@ -1,8 +1,8 @@
 package com.workintech.ecommerce.controller;
 
+import com.workintech.ecommerce.converter.Converter;
 import com.workintech.ecommerce.dto.response.ProductResponse;
 import com.workintech.ecommerce.entity.Products;
-import com.workintech.ecommerce.exception.EcommerceException;
 import com.workintech.ecommerce.service.ProductService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -22,11 +25,12 @@ public class ProductController {
     private static final String EXTERNAL_API_BASE_URL = "https://workintech-fe-ecommerce.onrender.com/products/";
 
     private final RestTemplate restTemplate;
-    private ProductService productService;
+    private final ProductService productService;
 
     @Autowired
-    public ProductController(RestTemplate restTemplate) {
+    public ProductController(RestTemplate restTemplate, ProductService productService) {
         this.restTemplate = restTemplate;
+        this.productService = productService;
     }
 
     @GetMapping("/")
@@ -47,7 +51,12 @@ public class ProductController {
             ResponseEntity<Products> response = restTemplate.getForEntity(EXTERNAL_API_BASE_URL + id, Products.class);
             Products product = response.getBody();
             if (product != null) {
-                return ResponseEntity.ok(product);
+                // Harici API yanıtını kontrol edin
+                System.out.println("API Response: " + product);
+
+                // Products varlığını ProductResponse DTO'suna dönüştür
+                ProductResponse productResponse = Converter.findProduct(product);
+                return ResponseEntity.ok(productResponse);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ürün bulunamadı.");
             }

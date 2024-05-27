@@ -41,8 +41,8 @@ public class Products {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @Column(name = "image")
-    private String image;
+    @Transient
+    private List<Image> images;
 
     @ManyToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinTable(name = "order_product", schema = "ecommerce", joinColumns = @JoinColumn(name = "product_id"),

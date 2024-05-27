@@ -32,7 +32,9 @@ public class ProductServiceImpl implements ProductService {
         }
         EcommerceValidation.checkEmptyOrNull(product.getName(),"name");
         EcommerceValidation.checkEmptyOrNull(product.getDescription(),"description");
-        EcommerceValidation.checkEmptyOrNull(product.getImage(),"image");
+        if (product.getImages() == null || product.getImages().isEmpty()) {
+            throw new EcommerceException("Image cannot be empty or null", HttpStatus.BAD_REQUEST);
+        }
         EcommerceValidation.isCategoryIdValid("category id", product.getCategoryId());
         return productRepository.save(product);
     }
@@ -201,8 +203,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> fetchAndSaveAllFromExternalService() {
+        // Implement fetch and save logic from external service if needed
         return null;
     }
-
-
 }
