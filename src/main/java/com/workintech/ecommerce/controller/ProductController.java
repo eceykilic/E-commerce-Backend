@@ -51,9 +51,6 @@ public class ProductController {
             ResponseEntity<Products> response = restTemplate.getForEntity(EXTERNAL_API_BASE_URL + id, Products.class);
             Products product = response.getBody();
             if (product != null) {
-                // Harici API yanıtını kontrol edin
-                System.out.println("API Response: " + product);
-
                 // Products varlığını ProductResponse DTO'suna dönüştür
                 ProductResponse productResponse = Converter.findProduct(product);
                 return ResponseEntity.ok(productResponse);

@@ -91,9 +91,7 @@ public class Converter {
                 product.getDescription(),
                 product.getPrice(),
                 product.getStock(),
-                product.getCategoryId(),
                 product.getRating(),
-                product.getSellCount(),
                 imageUrls
         );
     }
