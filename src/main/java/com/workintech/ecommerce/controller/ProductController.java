@@ -25,13 +25,13 @@ public class ProductController {
     private static final String EXTERNAL_API_BASE_URL = "https://workintech-fe-ecommerce.onrender.com/products/";
 
     private final RestTemplate restTemplate;
-    private final ProductService productService;
 
     @Autowired
     public ProductController(RestTemplate restTemplate, ProductService productService) {
         this.restTemplate = restTemplate;
-        this.productService = productService;
     }
+
+
 
     @GetMapping("/")
     public ResponseEntity<?> getAllProducts() {

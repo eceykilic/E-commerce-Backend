@@ -1,4 +1,4 @@
-package com.workintech.ecommerce.ecommerce.service;
+package com.workintech.ecommerce.service;
 
 import com.workintech.ecommerce.converter.Converter;
 import com.workintech.ecommerce.dto.response.ProductResponse;
@@ -63,56 +63,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> searchByName(String filter) {
-        EcommerceValidation.checkEmptyOrNull(filter,"filter");
-        return Converter.findProducts(productRepository.searchByName(filter));
-    }
-
-    @Override
-    public List<ProductResponse> highestToLowestSorting() {
-        return Converter.findProducts(productRepository.highestToLowestSorting());
-    }
-
-    @Override
-    public List<ProductResponse> lowestToHighestSorting() {
-        return Converter.findProducts(productRepository.lowestToHighestSorting());
-    }
-
-    @Override
-    public List<ProductResponse> worstToBestSorting() {
-        return Converter.findProducts(productRepository.worstToBestSorting());
-    }
-
-    @Override
-    public List<ProductResponse> bestToWorstSorting() {
-        return Converter.findProducts(productRepository.bestToWorstSorting());
-    }
-
-    @Override
-    public List<ProductResponse> searchAndLowestSorting(String filter) {
-        EcommerceValidation.checkEmptyOrNull(filter,"filter");
-        return Converter.findProducts(productRepository.searchAndLowestSorting(filter));
-    }
-
-    @Override
-    public List<ProductResponse> searchAndHighestSorting(String filter) {
-        EcommerceValidation.checkEmptyOrNull(filter,"filter");
-        return Converter.findProducts(productRepository.searchAndHighestSorting(filter));
-    }
-
-    @Override
-    public List<ProductResponse> searchAndWorstSorting(String filter) {
-        EcommerceValidation.checkEmptyOrNull(filter,"filter");
-        return Converter.findProducts(productRepository.searchAndWorstSorting(filter));
-    }
-
-    @Override
-    public List<ProductResponse> searchAndBestSorting(String filter) {
-        EcommerceValidation.checkEmptyOrNull(filter,"filter");
-        return Converter.findProducts(productRepository.searchAndBestSorting(filter));
-    }
-
-    @Override
     public List<Products> getAllProducts() {
         return productRepository.findAll();
     }
@@ -139,71 +89,5 @@ public class ProductServiceImpl implements ProductService {
             product= optionalProduct.get();
         }
         return product;
-    }
-
-    @Override
-    public List<Products> searchByNameAndCategory(String filter, Long categoryId) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        EcommerceValidation.checkEmptyOrNull(filter,"filter ");
-        return productRepository.searchByNameAndCategory(filter,categoryId);
-    }
-
-    @Override
-    public List<Products> searchAndWorstSortAndCategory(Long categoryId, String filter) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        EcommerceValidation.checkEmptyOrNull(filter,"filter ");
-        return productRepository.searchAndWorstSortAndCategory(categoryId,filter);
-    }
-
-    @Override
-    public List<Products> searchAndBestSortAndCategory(Long categoryId, String filter) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        EcommerceValidation.checkEmptyOrNull(filter,"filter ");
-        return productRepository.searchAndBestSortAndCategory(categoryId,filter);
-    }
-
-    @Override
-    public List<Products> searchAndAscSortAndCategory(Long categoryId, String filter) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        EcommerceValidation.checkEmptyOrNull(filter,"filter ");
-        return productRepository.searchAndAscSortAndCategory(categoryId, filter);
-    }
-
-    @Override
-    public List<Products> searchAndDescSortAndCategory(Long categoryId, String filter) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        EcommerceValidation.checkEmptyOrNull(filter,"filter ");
-        return productRepository.searchAndDescSortAndCategory(categoryId, filter);
-    }
-
-    @Override
-    public List<Products> highestToLowestSortingAndCategory(Long categoryId) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        return productRepository.highestToLowestSortingAndCategory(categoryId);
-    }
-
-    @Override
-    public List<Products> lowestToHighestSortingAndCategory(Long categoryId) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        return productRepository.lowestToHighestSortingAndCategory(categoryId);
-    }
-
-    @Override
-    public List<Products> worstToBestSortingAndCategory(Long categoryId) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        return productRepository.worstToBestSortingAndCategory(categoryId);
-    }
-
-
-    @Override
-    public List<Products> bestToWorstSortingAndCategory(Long categoryId) {
-        EcommerceValidation.isCategoryIdValid("category id",categoryId);
-        return productRepository.bestToWorstSortingAndCategory(categoryId);
-    }
-
-    @Override
-    public List<ProductResponse> fetchAndSaveAllFromExternalService() {
-        // Implement fetch and save logic from external service if needed
-        return null;
     }
 }

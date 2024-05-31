@@ -64,14 +64,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return user;
     }
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws EcommerceException {
         return userRepository.findUserByEmail(username).orElseThrow(() -> new EcommerceException("user not found", HttpStatus.NOT_FOUND));
-    }
-
-    @Override
-    public User signUp(User user) {
-        return user;
     }
 }

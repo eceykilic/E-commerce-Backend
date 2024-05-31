@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth->{
                     auth.requestMatchers("/products/**").permitAll();
                     auth.requestMatchers("/admin/**").hasAuthority("ADMIN");
-                    auth.requestMatchers("/auth/**").permitAll();
+                    auth.requestMatchers("/user/**").permitAll();
                     auth.requestMatchers("/category/**").permitAll();
                     auth.requestMatchers("/order/**").hasAnyAuthority("USER","ADMIN");
                     auth.requestMatchers("/card/**").permitAll();

@@ -21,7 +21,6 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @CrossOrigin("https://workintech-fe-ecommerce.onrender.com")
     @GetMapping
     public List<RoleResponse> findAll() {
         return Converter.findRoles(roleService.getRoles());

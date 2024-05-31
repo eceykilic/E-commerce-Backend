@@ -59,6 +59,9 @@ public class Address {
     @Column(name = "address")
     private String address;
 
+
+    // bir user birden çok adrese sahip olabilir.
+
     @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,
             CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "user_id")

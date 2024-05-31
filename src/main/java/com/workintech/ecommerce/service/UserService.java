@@ -9,8 +9,6 @@ public interface UserService {
     void findByEmail(String email);
     User findById(Long id);
     List<UserResponse> getAllUsers();
-
     UserResponse save(User user);
     User delete(Long id);
-    User signUp(User user);
 }

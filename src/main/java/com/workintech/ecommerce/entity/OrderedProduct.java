@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//kullanılmıyor
 @Entity
 @Data
 @NoArgsConstructor
