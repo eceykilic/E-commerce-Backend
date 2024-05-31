@@ -34,4 +34,9 @@ public class CardServiceImpl implements CardService{
     public void delete(Card card) {
         cardRepository.delete(card);
     }
+
+    @Override
+    public Card update(Card card) {
+        return cardRepository.save(card);
+    }
 }

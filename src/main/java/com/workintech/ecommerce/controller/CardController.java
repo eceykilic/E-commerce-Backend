@@ -31,4 +31,16 @@ public class CardController {
     public Card getCardById(@PathVariable long id){
         return cardService.findById(id);
     }
+
+    @PutMapping("/{id}") // Kart güncelleme
+    public Card updateCard(@PathVariable long id, @RequestBody Card card){
+        card.setId(id); // Güncelleme işleminde id'yi set etmemiz gerek
+        return cardService.update(card);
+    }
+
+    @DeleteMapping("/{id}") // Kart silme
+    public void deleteCard(@PathVariable long id){
+        Card card = cardService.findById(id); // Önce kartı bul
+        cardService.delete(card); // Sonra sil
+    }
 }

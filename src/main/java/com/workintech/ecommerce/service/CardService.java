@@ -9,4 +9,5 @@ public interface CardService {
     Card findById(Long id);
     Card save(Card card);
     void delete(Card card);
+    Card update(Card card);
 }
